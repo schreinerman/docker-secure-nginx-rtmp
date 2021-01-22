@@ -10,31 +10,31 @@ term_handler() {
 FFMPEG_SETTINGS=""
 HLS_SETTINGS=""
 
-if ([ ENABLE_720P_2628KBS == "TRUE" ])
+if ([ $ENABLE_720P_2628KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 1280x720 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_720p2628kbs"
   HLS_SETTINGS="$HLS_SETTINGS\n    hls_variant _720p2628kbs BANDWIDTH=2628000,RESOLUTION=1280x720;"
 fi
 
-if ([ ENABLE_480P_1128KBS == "TRUE" ])
+if ([ $ENABLE_480P_1128KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 854x480 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_480p1128kbs"
   HLS_SETTINGS="$HLS_SETTINGS\n    hls_variant _480p1128kbs BANDWIDTH=1128000,RESOLUTION=854x480;"
 fi
 
-if ([ ENABLE_360P_878KBS == "TRUE" ])
+if ([ $ENABLE_360P_878KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 640x360 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_360p878kbs"
   HLS_SETTINGS="$HLS_SETTINGS\n    hls_variant _360p878kbs BANDWIDTH=878000,RESOLUTION=640x360;"
 fi
 
-if ([ ENABLE_240P_528KBS == "TRUE" ])
+if ([ $ENABLE_240P_528KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 400k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 426x240 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_240p528kbs"
   HLS_SETTINGS="$HLS_SETTINGS\n    hls_variant _240p528kbs BANDWIDTH=528000,RESOLUTION=426x240;"
 fi
 
-if ([ ENABLE_240P_264KBS == "TRUE" ])
+if ([ $ENABLE_240P_264KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS -c:a libfdk_aac -b:a 64k -c:v libx264 -b:v 200k -f flv -sc_threshold 0 -hls_time 4 -g 15 -r 15 -s 426x240 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_240p264kbs"
   HLS_SETTINGS="$HLS_SETTINGS\n    hls_variant _240p264kbs BANDWIDTH=264000,RESOLUTION=426x240;"
