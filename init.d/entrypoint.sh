@@ -16,7 +16,16 @@ fi
 if ([ "${DOMAIN_NAME}" != "" ]) 
 then 
   USE_SSL=""
-  if [ -f /etc/letsencrypt/live/${DONAIN_NAME}/privkey.pem ]
+fi
+
+#updating variables in nginx.conf
+envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
+  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+  
+  
+if ([ "${DOMAIN_NAME}" != "" ]) 
+then 
+  if [ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ]
   then
     certbot renew
   else
@@ -24,10 +33,6 @@ then
   fi
 fi
 
-#updating variables in nginx.conf
-envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-  
 nginx &
 
 # wait forever not to exit the container
