@@ -18,6 +18,8 @@ then
   USE_SSL=""
 fi
 
+export USE_SSL=$USE_SSL
+
 #updating variables in nginx.conf
 envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
   /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
