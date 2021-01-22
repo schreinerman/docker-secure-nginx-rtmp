@@ -9,25 +9,25 @@ default settings for HLS live streaming. Built on Alpine Linux.
 * ffmpeg 4.3.1 (compiled from source)
 * Default HLS settings (See: [nginx.conf](nginx.conf))
 
-[![Docker Stars](https://img.shields.io/docker/stars/alfg/nginx-rtmp.svg)](https://hub.docker.com/r/alfg/nginx-rtmp/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/alfg/nginx-rtmp.svg)](https://hub.docker.com/r/alfg/nginx-rtmp/)
-[![Docker Automated build](https://img.shields.io/docker/automated/alfg/nginx-rtmp.svg)](https://hub.docker.com/r/alfg/nginx-rtmp/builds/)
-[![Build Status](https://travis-ci.org/alfg/docker-nginx-rtmp.svg?branch=master)](https://travis-ci.org/alfg/docker-nginx-rtmp)
+[![Docker Stars](https://img.shields.io/docker/stars/ioexpert/secure-nginx-rtmp.svg)](https://hub.docker.com/r/ioexpert/secure-nginx-rtmp/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/ioexpert/secure-nginx-rtmp.svg)](https://hub.docker.com/r/ioexpert/secure-nginx-rtmp/)
+[![Docker Automated build](https://img.shields.io/docker/automated/ioexpert/secure-nginx-rtmp.svg)](https://hub.docker.com/r/ioexpert/secure-nginx-rtmp/builds/)
+[![Build Status](https://travis-ci.org/schreinerman/docker-secure-nginx-rtmp.svg?branch=master)](https://travis-ci.org/schreinerman/docker-ioexpert/secure-nginx-rtmp)
 
 ## Usage
 
 ### Server
 * Pull docker image and run:
 ```
-docker pull ioexpert/nginx-secure-rtmp
-docker run -it -p 1935:1935 -p 8080:80 --rm ioexpert/nginx-secure-rtmp
+docker pull ioexpert/secure-nginx-rtmp
+docker run -it -p 1935:1935 -p 8080:80 --rm ioexpert/secure-nginx-rtmp
 ```
 or 
 
 * Build and run container from source:
 ```
 docker build -t nginx-secure-rtmp .
-docker run -it -p 1935:1935 -p 8080:80 --rm ginx-secure-rtmp
+docker run -it -p 1935:1935 -p 8080:80 --rm ioexpert/secure-nginx-rtmp
 ```
 
 * Stream live content to:
@@ -61,7 +61,8 @@ volumes:
 ### OBS Configuration
 * Stream Type: `Custom Streaming Server`
 * URL: `rtmp://localhost:1935/stream`
-* Stream Key: `hello`
+* Stream Key: `hello?psk=mysecret`
+* Docker Container Env AUTH_KEY=mysecret
 
 ### Watch Stream
 * In Safari, VLC or any HLS player, open:
