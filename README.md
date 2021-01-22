@@ -1,6 +1,17 @@
 # docker-secure-nginx-rtmp
 This project is inspired by https://github.com/alfg/docker-nginx-rtmp but adding security features for pushing described by https://smartshitter.com/musings/2017/12/nginx-rtmp-streaming-with-simple-authentication/
 
+Following Features are added to the original project alfg/docker-nginx-rtmp:
+* ENV AUTH_KEY: used in the OBS stream rtmp://IP-ADDRESS/stream/NAME?psk=AUTH_KEY
+* ENV DOMAIN_NAME: if specified, automatically initiate signing at letsencrypt
+
+Selectable encoding features (default set to TRUE):
+ * ENV ENABLE_720P_2628KBS "TRUE"
+ * ENV ENABLE_480P_1128KBS "TRUE"
+ * ENV ENABLE_360P_878KBS "TRUE"
+ * ENV ENABLE_240P_528KBS "TRUE"
+ * ENV ENABLE_240P_264KBS "TRUE"
+
 A Dockerfile installing NGINX, nginx-rtmp-module and FFmpeg from source with
 default settings for HLS live streaming. Built on Alpine Linux.
 
