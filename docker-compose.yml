@@ -13,5 +13,10 @@ services:
       - RTMP_PORT=1935
       - AUTH_KEY=123456789
       - DOMAIN_NAME=mydomain.com
+      - ENABLE_720P_2628KBS=TRUE
+      - ENABLE_480P_1128KBS=TRUE
+      - ENABLE_360P_878KBS=TRUE
+      - ENABLE_240P_528KBS=TRUE
+      - ENABLE_240P_264KBS=TRUE
     volumes:
       - ./certs:/opt/certs
