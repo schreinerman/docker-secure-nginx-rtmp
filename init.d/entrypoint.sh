@@ -9,9 +9,13 @@ term_handler() {
 
 # on callback, stop all started processes in term_handler
 trap 'kill ${!}; term_handler' SIGINT SIGKILL SIGTERM SIGQUIT SIGTSTP SIGSTOP SIGHUP
-
+if ([ "${USE_SSL}" != "" ])
+then
+  USE_SSL="#"
+fi
 if ([ "${DOMAIN_NAME}" != "" ]) 
 then 
+  USE_SSL=""
   if [ -f /etc/certbot_initialized ]
   then
     certbot renew
