@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  nginx-rtmp:
+  secure-nginx-rtmp:
     build: .
     ports:
       - 1935:1935
@@ -9,6 +9,9 @@ services:
       - 8443:443
     environment:
       - HTTP_PORT=80
+      - HTTPS_PORT=443
       - RTMP_PORT=1935
+      - AUTH_KEY=123456789
+      - DOMAIN_NAME=mydomain.com
     volumes:
       - ./certs:/opt/certs
