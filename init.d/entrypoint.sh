@@ -20,22 +20,31 @@ fi
 
 export USE_SSL=$USE_SSL
 
+if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
+then
+  export USE_SSL="#"
+fi
+
 #updating variables in nginx.conf
 envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
   /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   
-  
+nginx &
+
 if ([ "${DOMAIN_NAME}" != "" ]) 
 then 
-  if [ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ]
+  if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
   then
     certbot renew
   else
     certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email example@email.com  -d ${DOMAIN_NAME}
+    killall nginx
+    export USE_SSL=$USE_SSL
+    nginx &
   fi
 fi
 
-nginx &
+
 
 # wait forever not to exit the container
 while true
