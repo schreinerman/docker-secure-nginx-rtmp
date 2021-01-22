@@ -174,6 +174,9 @@ EXPOSE 1935
 EXPOSE 80
 EXPOSE 443
 
+RUN mkdir -p /etc/init.d
+COPY ./init.d/* /etc/init.d/
+
 ENTRYPOINT ["/etc/init.d/entrypoint.sh"]
 
 #set STOPSGINAL
