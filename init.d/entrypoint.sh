@@ -16,12 +16,11 @@ fi
 if ([ "${DOMAIN_NAME}" != "" ]) 
 then 
   USE_SSL=""
-  if [ -f /etc/certbot_initialized ]
+  if [ -f /etc/letsencrypt/live/${DONAIN_NAME}/privkey.pem ]
   then
     certbot renew
   else
     certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email example@email.com  -d ${DOMAIN_NAME}
-    touch /etc/certbot_initialized
   fi
 fi
 
