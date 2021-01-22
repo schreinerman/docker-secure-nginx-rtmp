@@ -36,6 +36,7 @@ nginx &
 
 if ([ "${DOMAIN_NAME}" != "" ]) 
 then 
+  sleep 10
   if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
   then
     certbot renew
@@ -43,6 +44,9 @@ then
     certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email example@email.com  -d ${DOMAIN_NAME}
     killall nginx
     export USE_SSL=$USE_SSL
+    #updating variables in nginx.conf
+    envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
+      /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
     nginx &
   fi
 fi
