@@ -1,4 +1,4 @@
-#!/bin/bash +e
+#!/bin/sh +e
 # catch signals as PID 1 in a container
 
 # SIGNAL-handler
