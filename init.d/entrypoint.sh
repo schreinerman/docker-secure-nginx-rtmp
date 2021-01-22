@@ -9,7 +9,7 @@ term_handler() {
 
 # on callback, stop all started processes in term_handler
 trap 'kill ${!}; term_handler' SIGINT SIGKILL SIGTERM SIGQUIT SIGTSTP SIGSTOP SIGHUP
-if ([ "${USE_SSL}" != "" ])
+if ([ "${USE_SSL}" == "" ])
 then
   USE_SSL="#"
 fi
@@ -22,6 +22,9 @@ export USE_SSL=$USE_SSL
 
 if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
 then
+  echo SSL OK...
+else
+  echo SSL not OK...
   export USE_SSL="#"
 fi
 
