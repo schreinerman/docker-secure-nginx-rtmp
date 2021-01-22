@@ -175,7 +175,11 @@ EXPOSE 80
 EXPOSE 443
 
 RUN mkdir -p /etc/init.d
-COPY ./init.d/* /etc/init.d/
+COPY "./init.d/*" /etc/init.d/ 
+
+RUN chmod -R +r /etc/init.d
+
+RUN chmod +x /etc/init.d/entrypoint.sh
 
 ENTRYPOINT ["/etc/init.d/entrypoint.sh"]
 
