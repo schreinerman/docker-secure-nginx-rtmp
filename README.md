@@ -3,7 +3,9 @@ This project is inspired by https://github.com/alfg/docker-nginx-rtmp but adding
 
 Following Features are added to the original project alfg/docker-nginx-rtmp:
 * ENV AUTH_KEY: used in the OBS stream rtmp://IP-ADDRESS/stream/NAME?psk=AUTH_KEY
-* ENV DOMAIN_NAME: if specified, automatically initiate signing at letsencrypt
+* ENV DOMAIN_NAME: if specified and no SSL cert exists, automatically initiate signing at letsencrypt 
+* ENV CERT_PRIVATE_KEY: Private cert name (in /opt/certs) or full path name
+* ENV CERT_PUBLIC: Public cert name (in /opt/certs) or full path name
 
 Selectable encoding features (default set to TRUE):
  * ENV ENABLE_720P_2628KBS "TRUE"
