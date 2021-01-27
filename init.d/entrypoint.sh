@@ -48,44 +48,121 @@ export HLS_SETTINGS=$HLS_SETTINGS
 
 # on callback, stop all started processes in term_handler
 trap 'kill ${!}; term_handler' SIGINT SIGKILL SIGTERM SIGQUIT SIGTSTP SIGSTOP SIGHUP
+
+
+FILE_CERT_PRIVATE=""
+FILE_CERT_PUBLIC=""
+USE_LETS_ENCRYPT=y
+USE_SSL="#"
+
+if ([ "${EMAIL}" == ""])
+then
+  EMAIL="example@email.com"
+fi
+
+#validating SSL private certificate
+if ([ "${CERT_PRIVATE_KEY}" != ""])
+then
+   if ([ -f "${CERT_PRIVATE_KEY}" ])
+   then
+      FILE_CERT_PRIVATE=${CERT_PRIVATE_KEY}
+   fi
+   if ([ -f "/opt/certs/${CERT_PRIVATE_KEY}" ])
+   then
+      FILE_CERT_PRIVATE="/opt/certs/${CERT_PRIVATE_KEY}"
+   fi
+fi
+
+#validating SSL public certificate
+if ([ "${CERT_PUBLIC}" != ""])
+then
+   if ([ -f "${CERT_PUBLIC}" ])
+   then
+      FILE_CERT_PUBLIC=${CERT_PUBLIC}
+   fi
+   if ([ -f "/opt/certs/${CERT_PUBLIC}" ])
+   then
+      FILE_CERT_PUBLIC="/opt/certs/${CERT_PUBLIC}"
+   fi
+fi
+
+#validating SSL certificates
+if ([ -f "${CERT_PRIVATE_KEY}" ])
+then
+  echo Private SSL Key found...
+  if ([ -f "${FILE_CERT_PUBLIC}" ])
+  then
+     echo Public SSL Key found...
+     USE_LETS_ENCRYPT=n
+     USE_SSL=""
+  fi
+fi
+
+if ([ ${USE_LETS_ENCRYPT} == "y" ])
+then
+  if ([ "${DOMAIN_NAME}" != "" ]) 
+  then 
+    echo Using Letsencrypt...
+    FILE_CERT_PUBLIC="/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem"
+    FILE_CERT_PRIVATE="/etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem"
+    USE_SSL=""
+  else
+    echo Not using Letsencrypt...
+    USE_SSL="#"
+    USE_LETS_ENCRYPT=n
+  fi
+fi
+
 if ([ "${USE_SSL}" == "" ])
 then
-  USE_SSL="#"
-fi
-if ([ "${DOMAIN_NAME}" != "" ]) 
-then 
-  USE_SSL=""
+  echo SSL disabled...
 fi
 
 export USE_SSL=$USE_SSL
 
-if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
+if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then
-  echo SSL OK...
-else
-  echo SSL not OK...
-  export USE_SSL="#"
+  if ([ -f ${FILE_CERT_PRIVATE} ])
+  then
+    echo Letsencrypt SSL OK...
+  else
+    echo SSL Letsencrypt is not OK...
+    echo Disabling SSL for now...
+    export USE_SSL="#"
+  fi
 fi
 
 #updating variables in nginx.conf
+echo Updating NGINX Config...
 envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
   /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   
+echo Stopping NGINX...
 nginx &
 
-if ([ "${DOMAIN_NAME}" != "" ]) 
+if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then 
   sleep 10
-  if ([ -f /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem ])
+  if ([ -f ${FILE_CERT_PRIVATE} ])
   then
+    echo Check for renewal Letsencrypt required...
     certbot renew
   else
-    certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email example@email.com  -d ${DOMAIN_NAME}
+    echo Initial Letsencrypt actions are required...
+    certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email ${EMAIL}  -d ${DOMAIN_NAME}
+
+    echo Stopping NGINX...
     killall nginx
+
+    echo Enabling SSL...
     export USE_SSL=$USE_SSL
+
     #updating variables in nginx.conf
+    echo Updating NGINX Config...
     envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
       /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+
+    echo Starting NGINX...
     nginx &
   fi
 fi

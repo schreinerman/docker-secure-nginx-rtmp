@@ -18,5 +18,7 @@ services:
       - ENABLE_360P_878KBS=TRUE
       - ENABLE_240P_528KBS=TRUE
       - ENABLE_240P_264KBS=TRUE
+      - CERT_PRIVATE_KEY=example.com.key
+      - CERT_PUBLIC=example.com.crt
     volumes:
       - ./certs:/opt/certs
