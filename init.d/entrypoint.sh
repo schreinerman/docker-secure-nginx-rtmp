@@ -7,7 +7,17 @@ term_handler() {
   exit 143; # 128 + 15 -- SIGTERM
 }
 
+#export_vars() {
+#  export USE_SSL=$USE_SSL
+#  export FFMPEG_SETTINGS=$FFMPEG_SETTINGS
+#  export HLS_SETTINGS=$HLS_SETTINGS
+#  export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
+#  export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
+#  export USE_SERVER_NAME=$USE_SERVER_NAME 
+#}
+
 restart_nginx() {
+  
   echo Updating NGINX Config...
   envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   echo Restarting NGINX...
@@ -15,6 +25,7 @@ restart_nginx() {
   sleep 30
 }
 
+DEBUG_FFMPEG_SETTINGS=""
 FFMPEG_SETTINGS=""
 HLS_SETTINGS=""
 LN="
@@ -26,30 +37,35 @@ if ([ $ENABLE_720P_2628KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS ${LN}${SPACE} -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 1280x720 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_720p2628kbs"
   HLS_SETTINGS="${HLS_SETTINGS}${LN}${SPACE}hls_variant _720p2628kbs BANDWIDTH=2628000,RESOLUTION=1280x720;"
+  DEBUG_FFMPEG_SETTINGS="${DEBUG_FFMPEG_SETTINGS}720P/2628KBS enabled${LN}"
 fi
 
 if ([ $ENABLE_480P_1128KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS ${LN}${SPACE} -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 854x480 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_480p1128kbs"
   HLS_SETTINGS="${HLS_SETTINGS}${LN}${SPACE}hls_variant _480p1128kbs BANDWIDTH=1128000,RESOLUTION=854x480;"
+  DEBUG_FFMPEG_SETTINGS="${DEBUG_FFMPEG_SETTINGS}480P/128KBS enabled{LN}"
 fi
 
 if ([ $ENABLE_360P_878KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS ${LN}${SPACE} -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 640x360 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_360p878kbs"
   HLS_SETTINGS="${HLS_SETTINGS}${LN}${SPACE}hls_variant _360p878kbs BANDWIDTH=878000,RESOLUTION=640x360;"
+  DEBUG_FFMPEG_SETTINGS="${DEBUG_FFMPEG_SETTINGS}360P/878KBS enabled{LN}"
 fi
 
 if ([ $ENABLE_240P_528KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS ${LN}${SPACE} -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 400k -f flv -sc_threshold 0 -hls_time 4 -g 30 -r 30 -s 426x240 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_240p528kbs"
   HLS_SETTINGS="${HLS_SETTINGS}${LN}${SPACE}hls_variant _240p528kbs BANDWIDTH=528000,RESOLUTION=426x240;"
+  DEBUG_FFMPEG_SETTINGS="${DEBUG_FFMPEG_SETTINGS}240P/528KBS enabled{LN}"
 fi
 
 if ([ $ENABLE_240P_264KBS == "TRUE" ])
 then
   FFMPEG_SETTINGS="$FFMPEG_SETTINGS ${LN}${SPACE} -c:a libfdk_aac -b:a 64k -c:v libx264 -b:v 200k -f flv -sc_threshold 0 -hls_time 4 -g 15 -r 15 -s 426x240 -tune zerolatency -preset superfast -profile:v baseline rtmp://localhost:1935/hls/\$name_240p264kbs"
   HLS_SETTINGS="${HLS_SETTINGS}${LN}${SPACE}hls_variant _240p264kbs BANDWIDTH=264000,RESOLUTION=426x240;"
+  DEBUG_FFMPEG_SETTINGS="${DEBUG_FFMPEG_SETTINGS}240P/264KBS enabled{LN}"
 fi
 
 export FFMPEG_SETTINGS=$FFMPEG_SETTINGS
@@ -174,6 +190,26 @@ then
   
 fi
 
+echo ########################################
+echo Settings overview:
+echo $DEBUG_FFMPEG_SETTINGS
+echo "--"
+if ([ $USE_SSL == "#" ])
+then
+  echo SSL: N
+else
+  echo SSL: Y
+  echo Use Lets-Encrypt: $USE_LETS_ENCRYPT
+fi
+
+if ([ "${DOMAIN_NAME}" != "" ]) 
+then
+  echo Domain: ${DOMAIN_NAME}
+  echo Public Cert: $FILE_CERT_PUBLIC
+  echo Private Cert: $FILE_CERT_PRIVATE
+  echo eMail: $EMAIL
+fi
+echo ########################################
 
 
 # wait forever not to exit the container
