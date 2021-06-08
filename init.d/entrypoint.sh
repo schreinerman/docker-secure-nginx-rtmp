@@ -12,6 +12,7 @@ HLS_SETTINGS=""
 LN="
 "
 SPACE="            "
+USE_SERVER_NAME=""
 
 if ([ $ENABLE_720P_2628KBS == "TRUE" ])
 then
@@ -111,6 +112,11 @@ then
     USE_SSL="#"
     USE_LETS_ENCRYPT=n
   fi
+fi
+
+if ([ "${DOMAIN_NAME}" != "" ]) 
+then
+    USE_SERVER_NAME="server_name ${DOMAIN_NAME};"
 fi
 
 if ([ "${USE_SSL}" == "" ])
