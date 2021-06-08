@@ -194,7 +194,7 @@ echo "++++++++++++++++++++++++++++++++++++++++++"
 echo Settings overview:
 echo $DEBUG_FFMPEG_SETTINGS
 echo "--"
-if ([ $USE_SSL == "" ])
+if ([ "$USE_SSL" == "" ])
 then
   echo SSL: Y
   echo Use Lets-Encrypt: $USE_LETS_ENCRYPT
