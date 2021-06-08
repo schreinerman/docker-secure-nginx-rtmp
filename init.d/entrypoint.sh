@@ -162,15 +162,14 @@ then
 
     echo Enabling SSL...
     export USE_SSL=$USE_SSL
-
-    #updating variables in nginx.conf
-    echo Updating NGINX Config...
-    envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-      /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-
-    echo Starting NGINX...
-    nginx &
   fi
+  #updating variables in nginx.conf
+  echo Updating NGINX Config...
+  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
+    /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+
+  echo Starting NGINX...
+  nginx &
 fi
 
 
