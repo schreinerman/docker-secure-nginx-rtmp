@@ -16,13 +16,28 @@ term_handler() {
 #  export USE_SERVER_NAME=$USE_SERVER_NAME 
 #}
 
-restart_nginx() {
-  
+update_nginx_config() {
   echo Updating NGINX Config...
-  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+}
+
+start_nginx() {
+  update_nginx_config
+  nginx &
+  sleep 10
+}
+
+restart_nginx() {
+  update_nginx_config 
   echo Restarting NGINX...
   nginx -s reload
-  sleep 30
+  sleep 10
+}
+
+stop_nginx() {
+  echo Stopping NGINX...
+  nginx -s stop
+  sleep 10
 }
 
 DEBUG_FFMPEG_SETTINGS=""
@@ -161,9 +176,7 @@ export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
 export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
 export USE_SERVER_NAME=""   
 
-envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-
-nginx &
+start_nginx
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then 
