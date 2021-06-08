@@ -24,3 +24,6 @@ services:
       # - CERT_PUBLIC=example.com.crt
     volumes:
       - ./certs:/opt/certs
+      - letsencrypt:/etc/letsencrypt
+volumes:
+  letsencrypt:
