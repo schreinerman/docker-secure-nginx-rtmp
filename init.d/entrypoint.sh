@@ -88,7 +88,7 @@ then
 fi
 
 #validating SSL certificates
-if ([ -f "${CERT_PRIVATE_KEY}" ])
+if ([ -f "${FILE_CERT_PRIVATE}" ])
 then
   echo Private SSL Key found...
   if ([ -f "${FILE_CERT_PUBLIC}" ])
