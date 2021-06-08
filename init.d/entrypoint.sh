@@ -8,6 +8,14 @@ term_handler() {
   exit 143; # 128 + 15 -- SIGTERM
 }
 
+restart_nginx() {
+  echo Updating NGINX Config...
+  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+  echo Restarting NGINX...
+  nginx -s reload
+  sleep 30
+}
+
 FFMPEG_SETTINGS=""
 HLS_SETTINGS=""
 LN="
@@ -142,27 +150,15 @@ fi
 export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
 export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
 export USE_SERVER_NAME=""   
-#updating variables in nginx.conf
-echo Updating NGINX Config...
-envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-  
-echo Stopping NGINX...
-killall -9 "nginx: master process nginx"
+
 nginx &
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then 
   export USE_SERVER_NAME=$USE_SERVER_NAME
-  killall "nginx: master process nginx"
-  sleep 5
-  killall -9 "nginx: master process nginx"
-  nginx &
-  #updating variables in nginx.conf
-  echo Updating NGINX Config...
-  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-  sleep 5
+  
+  restart_nginx
+  
   if ([ -f ${FILE_CERT_PRIVATE} ])
   then
     echo Check for renewal Letsencrypt required...
@@ -170,23 +166,13 @@ then
   else
     echo Initial Letsencrypt actions are required...
     certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --force-renewal -n --no-eff-email --email ${EMAIL}  -d ${DOMAIN_NAME}
-
-    echo Stopping NGINX...
-    killall "nginx: master process nginx"
-    sleep 5
-
     echo Enabling SSL...
     export USE_SSL=$USE_SSL
   fi
   export USE_SERVER_NAME=""
-  #updating variables in nginx.conf
-  echo Updating NGINX Config...
-  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
-    /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
-
-  echo Starting NGINX...
-  killall -9 "nginx: master process nginx"
-  nginx &
+  
+  restart_nginx
+  
 fi
 
 
