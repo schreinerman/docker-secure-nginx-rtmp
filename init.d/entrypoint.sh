@@ -140,7 +140,6 @@ fi
 
 export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
 export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
-export USE_SERVER_NAME=$USE_SERVER_NAME
     
 #updating variables in nginx.conf
 echo Updating NGINX Config...
@@ -152,6 +151,11 @@ nginx &
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then 
+  export USE_SERVER_NAME=$USE_SERVER_NAME
+  #updating variables in nginx.conf
+  echo Updating NGINX Config...
+  envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
+  /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   sleep 10
   if ([ -f ${FILE_CERT_PRIVATE} ])
   then
@@ -167,6 +171,7 @@ then
     echo Enabling SSL...
     export USE_SSL=$USE_SSL
   fi
+  export USE_SERVER_NAME=""
   #updating variables in nginx.conf
   echo Updating NGINX Config...
   envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
