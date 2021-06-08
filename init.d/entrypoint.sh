@@ -155,7 +155,7 @@ then
     certbot renew
   else
     echo Initial Letsencrypt actions are required...
-    certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --no-eff-email --email ${EMAIL}  -d ${DOMAIN_NAME}
+    certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --force-renewal -n --no-eff-email --email ${EMAIL}  -d ${DOMAIN_NAME}
 
     echo Stopping NGINX...
     killall nginx
