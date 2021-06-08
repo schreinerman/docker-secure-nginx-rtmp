@@ -166,6 +166,8 @@ export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
 export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
 export USE_SERVER_NAME=""   
 
+envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
+
 nginx &
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
