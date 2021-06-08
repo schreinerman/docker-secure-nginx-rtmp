@@ -138,6 +138,10 @@ then
   fi
 fi
 
+export FILE_CERT_PUBLIC=$FILE_CERT_PUBLIC
+export FILE_CERT_PRIVATE=$FILE_CERT_PRIVATE
+export USE_SERVER_NAME=$USE_SERVER_NAME
+    
 #updating variables in nginx.conf
 echo Updating NGINX Config...
 envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
