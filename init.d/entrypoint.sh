@@ -4,6 +4,7 @@
 # SIGNAL-handler
 term_handler() {  
   killall nginx
+  killall "nginx: master process nginx"
   exit 143; # 128 + 15 -- SIGTERM
 }
 
@@ -147,15 +148,15 @@ envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
   /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   
 echo Stopping NGINX...
-killall -9 nginx
+killall -9 "nginx: master process nginx"
 nginx &
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
 then 
   export USE_SERVER_NAME=$USE_SERVER_NAME
-  killall nginx
+  killall "nginx: master process nginx"
   sleep 5
-  killall -9 nginx
+  killall -9 "nginx: master process nginx"
   nginx &
   #updating variables in nginx.conf
   echo Updating NGINX Config...
@@ -171,7 +172,7 @@ then
     certbot run -a nginx -i nginx --rsa-key-size 4096 --agree-tos --force-renewal -n --no-eff-email --email ${EMAIL}  -d ${DOMAIN_NAME}
 
     echo Stopping NGINX...
-    killall nginx
+    killall "nginx: master process nginx"
     sleep 5
 
     echo Enabling SSL...
@@ -184,7 +185,7 @@ then
     /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
 
   echo Starting NGINX...
-  killall -9 nginx
+  killall -9 "nginx: master process nginx"
   nginx &
 fi
 
