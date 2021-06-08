@@ -55,13 +55,13 @@ FILE_CERT_PUBLIC=""
 USE_LETS_ENCRYPT=y
 USE_SSL="#"
 
-if ([ "${EMAIL}" == ""])
+if ([ "${EMAIL}" == "" ])
 then
   EMAIL="example@email.com"
 fi
 
 #validating SSL private certificate
-if ([ "${CERT_PRIVATE_KEY}" != ""])
+if ([ "${CERT_PRIVATE_KEY}" != "" ])
 then
    if ([ -f "${CERT_PRIVATE_KEY}" ])
    then
@@ -74,7 +74,7 @@ then
 fi
 
 #validating SSL public certificate
-if ([ "${CERT_PUBLIC}" != ""])
+if ([ "${CERT_PUBLIC}" != "" ])
 then
    if ([ -f "${CERT_PUBLIC}" ])
    then
