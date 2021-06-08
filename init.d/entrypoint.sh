@@ -143,11 +143,6 @@ then
     USE_SERVER_NAME="server_name ${DOMAIN_NAME};"
 fi
 
-if ([ "${USE_SSL}" == "" ])
-then
-  echo SSL disabled...
-fi
-
 export USE_SSL=$USE_SSL
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
