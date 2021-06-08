@@ -3,8 +3,7 @@
 
 # SIGNAL-handler
 term_handler() {  
-  killall nginx
-  killall "nginx: master process nginx"
+  nginx -s stop
   exit 143; # 128 + 15 -- SIGTERM
 }
 
