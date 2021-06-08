@@ -147,6 +147,7 @@ envsubst "$(env | sed -e 's/=.*//' -e 's/^/\$/g')" < \
   /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
   
 echo Stopping NGINX...
+killall -9 nginx
 nginx &
 
 if ([ ${USE_LETS_ENCRYPT} == "y" ])
@@ -167,6 +168,7 @@ then
 
     echo Stopping NGINX...
     killall nginx
+    sleep 10
 
     echo Enabling SSL...
     export USE_SSL=$USE_SSL
@@ -178,6 +180,7 @@ then
     /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf 
 
   echo Starting NGINX...
+  killall -9 nginx
   nginx &
 fi
 
